@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import NavBar from "../components/NavBar";
+import {  Col, Form, Row } from "react-bootstrap";
 
 const Index = () => {
   const [movies, setMovies] = useState([]);
@@ -38,7 +40,6 @@ const Index = () => {
     } catch (error) {
       if (searchText.length < 3) {
         setIsError(true);
-        setErrorText("Enter atleast 3 characters to perform search");
         setIsLoading(false);
       }
     }
@@ -59,6 +60,7 @@ const Index = () => {
         setSearchError(false);
       } else {
         setSearchError(true);
+        setIsLoading(false);
       }
     }, 1200);
 
@@ -69,22 +71,26 @@ const Index = () => {
 
   return (
     <>
-      <div>
-        <Link to={"add"}>Add new Movie</Link>
-      </div>
-      <div>
-        <input
-          type="text"
-          value={searchText}
-          placeholder="Search for movie"
-          onChange={(e) => {
-            setSearchText(e.target.value);
-          }}
-        />
-        <span style={{ color: "red" }} hidden={!searchError}>
-          Please enter at least 3 characters to perform search.
-        </span>
-      </div>
+      <NavBar />
+      <Form className="mt-3 w-100">
+        <Row>
+          <Col className="w-100 m-2">
+            <Form.Control
+              type="text"
+              placeholder="Search for a movie"
+              className="mr-sm-2"
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+              }}
+            />
+          </Col>
+
+          <Col xs="auto" className="text-danger m-2" hidden={!searchError}>
+            Please enter at least 3 characters to perform search
+          </Col>
+        </Row>
+      </Form>
       {isError ? (
         <>
           <div

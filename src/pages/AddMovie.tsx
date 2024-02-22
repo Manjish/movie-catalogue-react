@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
+import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
 
 const AddMovie = () => {
+  const navigate = useNavigate();
   const [movieName, setMovieName] = useState("");
   const [rating, setRating] = useState("");
   const [description, setDescription] = useState("");
@@ -17,48 +20,79 @@ const AddMovie = () => {
     try {
       const response = await axios.post(
         "https://api.dynoacademy.com/test-api/v1/movies",
-        movieData
+        movieData,
+        { timeout: 10000 }
       );
       setMovieName("");
       setRating("");
       setDescription("");
       alert(response.data.message);
-    } catch (error) {}
+      navigate("/", { replace: true });
+    } catch (error) {
+      error.response
+        ? alert(error.response.data.errors[0].message)
+        : alert("Unknown Error Occured");
+    }
   };
   return (
     <>
-      <div>
-        <Link to={"/"}>Back to Home</Link>
-      </div>
+      <NavBar />
+      <Container className="w-25">
+        <Form className="m-3" onSubmit={addMovieHandler}>
+          <Form.Group className="mb-3">
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Movie Name"
+              className="mb-3"
+            >
+              <Form.Control
+                type="text"
+                placeholder="Movie Name"
+                value={movieName}
+                onChange={(e) => {
+                  setMovieName(e.target.value);
+                }}
+              />
+            </FloatingLabel>
+          </Form.Group>
 
-      <form onSubmit={addMovieHandler}>
-        <input
-          type="text"
-          placeholder="Movie Name"
-          value={movieName}
-          onChange={(e) => {
-            setMovieName(e.target.value);
-          }}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="Rating"
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => {
-            setDescription(e.target.value);
-          }}
-        />{" "}
-        <br />
-        <button>Add New</button>
-      </form>
+          <Form.Group className="mb-3">
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Movie Rating"
+              className="mb-3"
+            >
+              <Form.Control
+                type="text"
+                placeholder="Rating"
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+              />
+            </FloatingLabel>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Movie Description"
+              className="mb-3"
+            >
+              <Form.Control
+                type="text"
+                placeholder="Description"
+                value={description}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+              />
+            </FloatingLabel>
+          </Form.Group>
+
+          <Button variant="dark" type="submit">
+            Submit
+          </Button>
+        </Form>
+      </Container>
     </>
   );
 };
