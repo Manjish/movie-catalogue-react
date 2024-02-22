@@ -3,15 +3,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
+import NormalModal from "../components/NormalModal";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     if (email.length < 1 || password.length < 1) {
-      alert("Please fill up all the fields");
+      setModalMessage("Please fill up all the fields");
+      setShowModal(true);
       return;
     }
     try {
@@ -25,13 +29,13 @@ const Login = () => {
         localStorage.setItem("token", loginCheck.data.accessToken);
         setEmail("");
         setPassword("");
-        alert("Login success");
         navigate("/", { replace: true });
       }
     } catch (error) {
       error.response
-        ? alert(error.response.data.errors[0].message)
-        : alert("Unkown error occured. Try again later !");
+        ? setModalMessage(error.response.data.errors[0].message)
+        : setModalMessage("Unkown error occured. Try again later !");
+      setShowModal(true);
     }
   };
   return (
@@ -80,6 +84,8 @@ const Login = () => {
           </Button>
         </Form>
       </Container>
+
+      <NormalModal data={{showModal,modalMessage,setShowModal}} />
     </>
   );
 };

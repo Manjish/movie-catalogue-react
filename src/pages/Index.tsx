@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
-import {  Col, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import MovieCard from "../components/MovieCard";
 
 const Index = () => {
   const [movies, setMovies] = useState([]);
@@ -72,25 +72,27 @@ const Index = () => {
   return (
     <>
       <NavBar />
-      <Form className="mt-3 w-100">
-        <Row>
-          <Col className="w-100 m-2">
-            <Form.Control
-              type="text"
-              placeholder="Search for a movie"
-              className="mr-sm-2"
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-              }}
-            />
-          </Col>
+      <Container>
+        <Form className="mt-2 w-100">
+          <Row>
+            <Col className="w-100 mb-2">
+              <Form.Control
+                type="text"
+                placeholder="Search for a movie"
+                className="mr-sm-2"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                }}
+              />
+            </Col>
 
-          <Col xs="auto" className="text-danger m-2" hidden={!searchError}>
-            Please enter at least 3 characters to perform search
-          </Col>
-        </Row>
-      </Form>
+            <Col xs="auto" className="text-danger m-2" hidden={!searchError}>
+              Please enter at least 3 characters to perform search
+            </Col>
+          </Row>
+        </Form>
+      </Container>
       {isError ? (
         <>
           <div
@@ -106,28 +108,31 @@ const Index = () => {
         </>
       ) : (
         <>
-          <div>{isLoading ? <>Loading.....</> : <></>}</div>
+          <div>
+            {isLoading ? (
+              <>
+                <div className="text-center">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
           {!isLoading && movies.length < 1 ? (
             <div style={{ background: "#e7e7e7", marginTop: "10px" }}>
               No movies found
             </div>
           ) : (
-            <div style={{ background: "#e7e7e7", marginTop: "10px" }}>
+            <Row xs={1} md={"auto"} className="g-4 justify-content-around">
               {movies.map((movie) => (
-                <div key={movie.id}>
-                  <Link to={`view/${movie.id}`}>
-                    <span style={{ fontWeight: "bold" }}>{movie.name}</span>
-                  </Link>
-                  <br />
-                  <img src={movie.image} alt="Movie image" height="100px" />
-                  <br />
-                  Info: {movie.info}
-                  <br />
-                  Rating: {movie.rating}
-                  <hr />
-                </div>
+                <Col key={movie.id}>
+                  <MovieCard data={movie} />
+                </Col>
               ))}
-            </div>
+            </Row>
           )}
         </>
       )}

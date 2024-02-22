@@ -3,12 +3,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
+import NormalModal from "../components/NormalModal";
 
 const AddMovie = () => {
   const navigate = useNavigate();
   const [movieName, setMovieName] = useState("");
   const [rating, setRating] = useState("");
   const [description, setDescription] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const addMovieHandler = async (e) => {
     e.preventDefault();
 
@@ -26,12 +29,15 @@ const AddMovie = () => {
       setMovieName("");
       setRating("");
       setDescription("");
-      alert(response.data.message);
+      setModalMessage(response.data.message);
+      setShowModal(true);
       navigate("/", { replace: true });
     } catch (error) {
       error.response
-        ? alert(error.response.data.errors[0].message)
-        : alert("Unknown Error Occured");
+        ? setModalMessage(error.response.data.errors[0].message)
+        : setModalMessage("Unknown Error Occured");
+
+      setShowModal(true);
     }
   };
   return (
@@ -63,7 +69,7 @@ const AddMovie = () => {
               className="mb-3"
             >
               <Form.Control
-                type="text"
+                type="number"
                 placeholder="Rating"
                 value={rating}
                 onChange={(e) => setRating(e.target.value)}
@@ -78,6 +84,7 @@ const AddMovie = () => {
               className="mb-3"
             >
               <Form.Control
+                as="textarea"
                 type="text"
                 placeholder="Description"
                 value={description}
@@ -93,6 +100,8 @@ const AddMovie = () => {
           </Button>
         </Form>
       </Container>
+
+      <NormalModal data={{ showModal, modalMessage, setShowModal }} />
     </>
   );
 };

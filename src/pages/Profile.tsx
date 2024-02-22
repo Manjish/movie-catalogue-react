@@ -2,9 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import { Card } from "react-bootstrap";
+import NormalModal from "../components/NormalModal";
 
 const Profile = () => {
-  const [userData, setUserData] = useState({});
+  type profile = {
+    name?: string;
+    email?: string;
+    country?: string;
+  };
+  const [userData, setUserData] = useState<profile>({});
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const accessToken = localStorage.getItem("token");
 
@@ -22,8 +31,9 @@ const Profile = () => {
       setUserData(profileData.data.data);
     } catch (error) {
       error.response
-        ? alert(error.response.data.errors[0].message)
-        : alert("Unkown Error Occured. Try again later !!");
+        ? setModalMessage(error.response.data.errors[0].message)
+        : setModalMessage("Unkown Error Occured. Try again later !!");
+      setShowModal(true);
     }
   };
 
@@ -47,6 +57,8 @@ const Profile = () => {
           </Card.Body>
         </Card>
       </div>
+
+      <NormalModal data={{ showModal, modalMessage, setShowModal }} />
     </>
   );
 };

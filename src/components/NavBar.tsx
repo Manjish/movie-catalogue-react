@@ -1,9 +1,19 @@
-import { Button, Container, Navbar } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Container, Modal, Navbar } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const [modalMessage, setModalMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const confirmLogout = () => {
+    setModalMessage("Are you sure you want to logout ?");
+    setShowModal(true);
+  };
+
   const handleLogout = () => {
+    setShowModal(false);
     localStorage.clear();
     navigate("/", { replace: true });
   };
@@ -25,7 +35,7 @@ const NavBar = () => {
                   <Link to={"/profile"}>Profile</Link>
                 </Navbar.Text>
                 <Navbar.Text>
-                  <Button variant="danger" onClick={handleLogout}>
+                  <Button variant="danger" onClick={confirmLogout}>
                     Logout
                   </Button>
                 </Navbar.Text>
@@ -38,6 +48,21 @@ const NavBar = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Hold Up !!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modalMessage}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={handleLogout}>
+            Logout
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
